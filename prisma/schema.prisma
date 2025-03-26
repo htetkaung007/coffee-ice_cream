@@ -1,0 +1,126 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id    Int     @id @default(autoincrement())
+  email String  @unique
+  name  String?
+  company    Company    @relation(fields: [companyId], references: [id])
+  companyId Int
+  createdAt DateTime @default(now())
+  updateTime DateTime @updatedAt
+  isArchived Boolean @default(false)
+}
+
+
+model Company {
+  id    Int @id @default(autoincrement())
+  name String
+  adress String?
+  users User[]
+  locations Loactions[]
+  menuCatgories MenuCategory[]
+  createdAt DateTime @default(now())
+  updateTime DateTime @updatedAt
+  isArchived Boolean @default(false)
+
+}
+
+model Tabels {
+  id    Int @id @default(autoincrement())
+  name String
+  location    Loactions    @relation(fields: [locationId], references: [id])
+  locationId Int
+  createdAt DateTime @default(now())
+  updateTime DateTime @updatedAt
+}
+
+model Loactions {
+  id    Int @id @default(autoincrement())
+  name String
+  tables Tabels[]
+  company    Company    @relation(fields: [companyId], references: [id])
+  companyId Int
+  createdAt DateTime @default(now())
+  updateTime DateTime @updatedAt
+}
+
+
+
+model Menu {
+  id        Int     @id @default(autoincrement())
+  name     String
+  price     Int
+  assetUrl   String?
+  menuMenuCategory MenuMenCategory[]
+  menuAddonCategories   MenuAddonCategories[]
+  createdAt DateTime @default(now())
+  updateTime DateTime @updatedAt
+  isAvailable Boolean @default(true)
+  isArchived Boolean @default(false)
+  
+}
+model MenuCategory {
+  id        Int     @id @default(autoincrement())
+  name     String
+  company    Company    @relation(fields: [companyId], references: [id])
+  companyId  Int
+  menuMenuCategory MenuMenCategory[]
+  isAvailable Boolean @default(true)
+  createdAt DateTime @default(now())
+  updateTime DateTime @updatedAt
+  isArchived Boolean @default(false)
+}
+//join Tabel
+model MenuMenCategory {
+  id        Int     @id @default(autoincrement())
+  menuCategory  MenuCategory @relation(fields: [menuCategoryId],references: [id])
+  menuCategoryId Int
+  menu Menu @relation(fields: [menuId],references: [id])
+  menuId    Int
+}
+
+model Addons {
+  id        Int     @id @default(autoincrement())
+  name     String
+  price     Int
+  addonCategory   AddonCategories @relation(fields: [addonCategoryId], references: [id])
+  addonCategoryId Int
+  isAvailable Boolean @default(true)
+  createdAt DateTime @default(now())
+  updateTime DateTime @updatedAt
+}
+
+model AddonCategories {
+  id                Int                 @id @default(autoincrement())
+  name              String
+  isRequired        Boolean             @default(false)
+  addons             Addons[]
+  menuAddonCategory MenuAddonCategories[]
+  isArchive Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model MenuAddonCategories {
+  id              Int           @id @default(autoincrement())
+  menu            Menu          @relation(fields: [MenuId], references: [id])
+  MenuId          Int
+  addonCategory   AddonCategories @relation(fields: [addonCategoryId], references: [id])
+  addonCategoryId Int
+  isArchive Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
