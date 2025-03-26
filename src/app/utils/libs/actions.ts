@@ -12,7 +12,7 @@ export async function createDefaultData(nextUser: User) {
   const company = await prisma.company.create({
     data: { name: "Default Company" },
   });
-  await prisma.user.create({
+  const user = await prisma.user.create({
     data: { name: String(name), email: String(email), companyId: company.id },
   });
   const menuCategory = await prisma.menuCategory.create({
@@ -49,6 +49,10 @@ export async function createDefaultData(nextUser: User) {
 
   const table = await prisma.tabels.create({
     data: { name: "Default Table", locationId: loaction.id },
+  });
+  /* Add This one */
+  await prisma.selectedLocations.create({
+    data: { userId: user.id, locationId: loaction.id },
   });
 }
 

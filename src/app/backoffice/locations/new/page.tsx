@@ -1,11 +1,4 @@
-import {
-  Box,
-  Button,
-  Checkbox,
-  FormControlLabel,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Box, Button, TextField } from "@mui/material";
 
 import { CreateLocations } from "../action";
 
