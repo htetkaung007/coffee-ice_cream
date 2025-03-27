@@ -1,9 +1,14 @@
 import { Box, AppBar, Toolbar, Typography } from "@mui/material";
-import { getCompanyLocations } from "../utils/libs/actions";
+import {
+  getCompanyLocations,
+  getSelectedLocations,
+} from "../utils/libs/actions";
 import LocationSignOut from "./LocationSignOut";
 
 const TopBar = async () => {
-  const responseDataLocation = await getCompanyLocations();
+  const locations = await getCompanyLocations();
+  const currentLocation = (await getSelectedLocations())?.locationId;
+  const location = locations.find((item) => item.id === currentLocation);
 
   return (
     <Box>
@@ -22,7 +27,8 @@ const TopBar = async () => {
                   Coffee & Ice-cream
                 </Typography>
               </Box>
-              <LocationSignOut Location={responseDataLocation} />
+              <Typography variant="h6">{location?.name}</Typography>
+              <LocationSignOut />
             </Box>
           </Toolbar>
         </AppBar>

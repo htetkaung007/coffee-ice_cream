@@ -112,6 +112,22 @@ export async function getCompanyLocations() {
   return loactions;
 }
 
+export async function getDataUserId() {
+  const session = await getServerSession();
+  const user = await prisma.user.findFirst({
+    where: { email: session?.user?.email || "" },
+  });
+
+  return user?.id;
+}
+
+export async function getSelectedLocations() {
+  const loactions = await prisma.selectedLocations.findFirst({
+    orderBy: { id: "asc" },
+    where: { userId: await getDataUserId() },
+  });
+  return loactions;
+}
 export async function getCompanyTables() {
   const location = await getCompanyLocations();
   const locationId = location.map((item) => item.id);

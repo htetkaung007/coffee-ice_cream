@@ -1,5 +1,10 @@
 "use server";
-import { getCompanyId } from "@/app/utils/libs/actions";
+import {
+  getCompanyId,
+  getCompanyLocations,
+  getDataUserId,
+  getSelectedLocations,
+} from "@/app/utils/libs/actions";
 /* If the export key  */
 import { prisma } from "@/app/utils/prisma";
 import { redirect } from "next/navigation";
@@ -12,10 +17,17 @@ export const getLocation = async (id: number) => {
 
 export const UpDateLocation = async (formData: FormData) => {
   const name = formData.get("name") as string;
+  const userId = (await getDataUserId()) as number;
+  const userIdLocation = await prisma.selectedLocations.findFirst({
+    where: { userId },
+  });
+  const companyLocation = await getCompanyLocations();
+  const selectedLocationsId = userIdLocation?.id;
+  const updateLocationId = formData.get("updateId");
   if (!name) {
     redirect("/backoffice/locations?error=Location name is required");
   }
-  const updateLocationId = formData.get("updateId");
+  const currentLocationId = formData.get("currentLocaationId");
   await prisma.loactions.update({
     data: {
       name,
@@ -25,24 +37,38 @@ export const UpDateLocation = async (formData: FormData) => {
     },
   });
 
+  if (currentLocationId) {
+    await prisma.selectedLocations.update({
+      data: { locationId: Number(updateLocationId) },
+      where: { id: selectedLocationsId },
+    });
+  } else {
+    await prisma.selectedLocations.update({
+      data: { locationId: companyLocation[0].id },
+      where: { id: selectedLocationsId },
+    });
+  }
   redirect("/backoffice/locations");
 };
 /* Create  */
 export const CreateLocations = async (formData: FormData) => {
   const name = formData.get("name") as string;
-
-  await prisma.loactions.create({
+  const location = await prisma.loactions.create({
     data: {
       name,
       companyId: (await getCompanyId()) as number,
     },
   });
+
   redirect("/backoffice/locations");
 };
 
 export const DeleteLocations = async (formData: FormData) => {
   const id = Number(formData.get("id"));
-
+  const currentLocationId = (await getSelectedLocations())?.locationId;
+  if (id === currentLocationId) {
+    redirect("/backoffice/locations?error=Current Location Cann't be Delete");
+  }
   await prisma.tabels.deleteMany({
     where: { locationId: id },
   });

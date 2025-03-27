@@ -1,10 +1,17 @@
-import { Box, Button, TextField, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Checkbox,
+  FormControlLabel,
+  TextField,
+  Typography,
+} from "@mui/material";
 
 import { DeleteLocations, getLocation, UpDateLocation } from "../action";
 
 import { redirect } from "next/navigation";
-import LocationCheckbox from "@/app/components/LocationCheckbox";
-import { getCompanyLocations } from "@/app/utils/libs/actions";
+
+import { getSelectedLocations } from "@/app/utils/libs/actions";
 
 interface props {
   params: {
@@ -15,7 +22,7 @@ interface props {
 export default async function MenuUpdatePage({ params }: props) {
   const { id } = await params;
   const locations = await getLocation(Number(id));
-  const location = await getCompanyLocations();
+  const selectedLocation = await getSelectedLocations();
   if (!locations) {
     redirect("/backoffice/locations?error=Location Id is not found");
   }
@@ -52,8 +59,18 @@ export default async function MenuUpdatePage({ params }: props) {
           variant="outlined"
           sx={{ mb: 2 }}
         />
-        <LocationCheckbox id={id} locations={location} />
-        <input value={id} type="hidden" name="updateId" />
+        <FormControlLabel
+          control={
+            <Checkbox
+              name="currentLocaationId"
+              defaultChecked={
+                Number(id) === selectedLocation?.locationId ? true : false
+              }
+            />
+          }
+          label={"Current Location"}
+        />
+        <input defaultValue={id} type="hidden" name="updateId" />
         <Button
           variant="contained"
           type="submit"
