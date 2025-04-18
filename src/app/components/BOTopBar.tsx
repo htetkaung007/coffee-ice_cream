@@ -4,11 +4,14 @@ import {
   getSelectedLocations,
 } from "../utils/libs/actions";
 import LocationSignOut from "./LocationSignOut";
+import { prisma } from "../utils/prisma";
+import { getCompany } from "../backoffice/setting/action";
 
 const TopBar = async () => {
   const locations = await getCompanyLocations();
   const currentLocation = (await getSelectedLocations())?.locationId;
   const location = locations.find((item) => item.id === currentLocation);
+  const company = await getCompany();
 
   return (
     <Box>
@@ -24,7 +27,7 @@ const TopBar = async () => {
             >
               <Box>
                 <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                  Coffee & Ice-cream
+                  {company?.name}
                 </Typography>
               </Box>
               <Typography variant="h6">{location?.name}</Typography>

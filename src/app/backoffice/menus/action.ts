@@ -1,4 +1,5 @@
 "use server";
+import { getSelectedLocations } from "@/app/utils/libs/actions";
 /* If the export key  */
 import { prisma } from "@/app/utils/prisma";
 import { redirect } from "next/navigation";
@@ -6,13 +7,13 @@ import { redirect } from "next/navigation";
 export const getMenu = async (id: number) => {
   return await prisma.menu.findFirst({
     where: { id },
-    include: { menuMenuCategory: true } /* also take menuMenuCategory table */,
+    include: {
+      menuMenuCategory: true,
+      disableLocationMenus: true,
+    } /* also take menuMenuCategory table */,
   });
 };
 
-export const getMenus = async () => {
-  return await prisma.menu.findMany({});
-};
 export const UpDateMenu = async (formData: FormData) => {
   const name = formData.get("updateMenuName") as string;
   const price = Number(formData.get("UpdatePrice"));
@@ -24,7 +25,7 @@ export const UpDateMenu = async (formData: FormData) => {
     .map((id) => Number(id));
 
   await prisma.menu.update({
-    data: { name, isAvailable: isAvailable ? true : false, price },
+    data: { name, price },
     where: {
       id: Number(updateMenuId),
     },
@@ -51,6 +52,20 @@ export const UpDateMenu = async (formData: FormData) => {
     }));
     await prisma.menuMenCategory.createMany({ data });
   }
+  if (!isAvailable) {
+    const locationId = (await getSelectedLocations())?.locationId;
+    if (!locationId) return;
+    await prisma.disableLocationMenus.create({
+      data: { MenusId: Number(updateMenuId), locationsId: locationId },
+    });
+  } else {
+    const disableLocationMenus = await prisma.disableLocationMenus.findFirst({
+      where: { MenusId: Number(updateMenuId) },
+    });
+    await prisma.disableLocationMenus.delete({
+      where: { id: disableLocationMenus?.id },
+    });
+  }
 
   redirect("/backoffice/menus");
 };
@@ -67,13 +82,21 @@ export const CreateMenu = async (formData: FormData) => {
   if (!isValid) return;
 
   const menu = await prisma.menu.create({
-    data: { name, price, isAvailable: isAvailable ? true : false },
+    data: { name, price },
   });
   const data = menuCategoryIds.map((menuCategoryId) => ({
     menuId: menu.id,
     menuCategoryId,
   }));
+
   await prisma.menuMenCategory.createMany({ data });
+  const currentLoaction = (await getSelectedLocations())?.locationId;
+  if (!currentLoaction) return;
+  if (!isAvailable) {
+    await prisma.disableLocationMenus.create({
+      data: { MenusId: menu.id, locationsId: currentLoaction },
+    });
+  }
   redirect("/backoffice/menus");
 };
 

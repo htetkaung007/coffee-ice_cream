@@ -9,6 +9,7 @@ import {
   Typography,
 } from "@mui/material";
 import { DeleteMenuCategory, UpDateMenuCategory } from "../action";
+import { getSelectedLocations } from "@/app/utils/libs/actions";
 
 interface props {
   params: {
@@ -19,10 +20,24 @@ interface props {
 export default async function MenuUpdatePage({ params }: props) {
   const { id } = await params;
   if (!id) return;
-  const getMenuCategory = await prisma.menuCategory.findFirst({
+  const selectedLocation = await getSelectedLocations();
+  const menuCategories = await prisma.menuCategory.findFirst({
     where: { id: Number(id) },
+    include: { disableLocationMenuCategories: true },
   });
-  if (!getMenuCategory) return null;
+  if (!menuCategories) return null;
+
+  const disableLocationMenuCategories =
+    menuCategories?.disableLocationMenuCategories;
+
+  const isAvailable = disableLocationMenuCategories.find(
+    (item) =>
+      item.MenuCategoryIds === Number(id) &&
+      item.locationsId === selectedLocation?.locationId
+  )
+    ? false
+    : true;
+
   return (
     <Box>
       <Box
@@ -31,7 +46,7 @@ export default async function MenuUpdatePage({ params }: props) {
         sx={{ display: "flex", justifyContent: "space-between", mb: 3 }}
       >
         <Typography variant="h4">Update MenuCategory Page</Typography>
-        <input value={id} type="hidden" name="menuCategoryId"></input>
+        <input defaultValue={id} type="hidden" name="menuCategoryId"></input>
         <Button
           type="submit"
           variant="contained"
@@ -47,19 +62,14 @@ export default async function MenuUpdatePage({ params }: props) {
         action={UpDateMenuCategory}
       >
         <TextField
-          defaultValue={getMenuCategory?.name}
+          defaultValue={menuCategories?.name}
           name="updateMenuCategoryName"
           variant="outlined"
           sx={{ mb: 2 }}
         />
-        <input value={id} type="hidden" name="updateMenuCategoryId" />
+        <input defaultValue={id} type="hidden" name="updateMenuCategoryId" />
         <FormControlLabel
-          control={
-            <Checkbox
-              defaultChecked={getMenuCategory.isAvailable}
-              name="isAvailable"
-            />
-          }
+          control={<Checkbox defaultChecked={isAvailable} name="isAvailable" />}
           label="Available"
         />
 

@@ -1,5 +1,5 @@
 "use client";
-import { Box, Paper, Typography } from "@mui/material";
+import { Box, Chip, Paper, Typography } from "@mui/material";
 import Link from "next/link";
 import { ReactNode } from "react";
 
@@ -8,9 +8,10 @@ interface Props {
   title: string;
   href?: string;
   subtitle?: string;
+  isAvailable?: boolean;
 }
 
-const ItemCard = ({ icon, title, href, subtitle }: Props) => {
+const ItemCard = ({ icon, title, href, subtitle, isAvailable }: Props) => {
   if (href) {
     return (
       <Link href={href} style={{ textDecoration: "none", color: "#000000" }}>

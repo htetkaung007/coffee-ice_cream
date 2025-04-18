@@ -58,7 +58,9 @@ export const DeleteAddonCategory = async (formData: FormData) => {
   await prisma.menuAddonCategories.deleteMany({
     where: { addonCategoryId: id },
   });
-
+  await prisma.addons.deleteMany({
+    where: { addonCategoryId: id },
+  });
   await prisma.addonCategories.delete({
     where: { id },
   });

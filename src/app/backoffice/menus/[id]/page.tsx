@@ -7,7 +7,10 @@ import {
   Typography,
 } from "@mui/material";
 import { DeleteMenu, getMenu, UpDateMenu } from "../action";
-import { getCompanyMenuCategories } from "@/app/utils/libs/actions";
+import {
+  getCompanyMenuCategories,
+  getSelectedLocations,
+} from "@/app/utils/libs/actions";
 
 interface props {
   params: {
@@ -18,6 +21,14 @@ interface props {
 export default async function MenuUpdatePage({ params }: props) {
   const { id } = await params;
   const menu = await getMenu(Number(id));
+  const selectedLocation = await getSelectedLocations();
+  const isAvailable = menu?.disableLocationMenus.find(
+    (item) =>
+      item.MenusId === Number(id) &&
+      item.locationsId === selectedLocation?.locationId
+  )
+    ? false
+    : true;
   if (!menu) return null;
 
   const selected = menu.menuMenuCategory.map((item) => item.menuCategoryId);
@@ -92,12 +103,7 @@ export default async function MenuUpdatePage({ params }: props) {
 
         <input value={id} type="hidden" name="updateMenuId" />
         <FormControlLabel
-          control={
-            <Checkbox
-              defaultChecked={menu.isArchived ? true : false}
-              name="isAvailable"
-            />
-          }
+          control={<Checkbox defaultChecked={isAvailable} name="isAvailable" />}
           label="Available"
         />
 

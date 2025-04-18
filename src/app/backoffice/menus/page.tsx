@@ -1,16 +1,14 @@
-import ItemCard from "@/app/components/itemCard";
-
-import { prisma } from "@/app/utils/prisma";
 import { Box, Button } from "@mui/material";
 import Link from "next/link";
 
 import MenuCard from "@/app/components/MenuCard";
 import {
-  getCompanyMenuCategories,
   getCompanyMenus,
+  getSelectedLocations,
 } from "@/app/utils/libs/actions";
 const Menus = async () => {
   const menus = await getCompanyMenus();
+
   return (
     <Box>
       <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
@@ -22,7 +20,7 @@ const Menus = async () => {
       </Box>
       <Box sx={{ display: "flex", flexWrap: "wrap" }}>
         {menus.map((item) => (
-          <MenuCard menu={item}></MenuCard>
+          <MenuCard menu={item} isAvailable={true} key={item.id}></MenuCard>
         ))}
       </Box>
     </Box>

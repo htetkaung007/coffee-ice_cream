@@ -14,7 +14,11 @@ const AddMenuCategory = () => {
       sx={{ display: "flex", flexDirection: "column" }}
       action={CreateMenuCategory}
     >
-      <TextField defaultValue={""} name="menuCategory"></TextField>
+      <TextField
+        defaultValue={""}
+        name="menuCategory"
+        label="Add MenuCategory Name"
+      ></TextField>
       <FormControlLabel
         control={<Checkbox defaultChecked name="isAvailable" />}
         label="Available"

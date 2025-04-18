@@ -12,7 +12,7 @@ export async function createDefaultData(nextUser: User) {
   const company = await prisma.company.create({
     data: { name: "Default Company" },
   });
-  await prisma.user.create({
+  const user = await prisma.user.create({
     data: { name: String(name), email: String(email), companyId: company.id },
   });
   const menuCategory = await prisma.menuCategory.create({
@@ -50,6 +50,10 @@ export async function createDefaultData(nextUser: User) {
   const table = await prisma.tabels.create({
     data: { name: "Default Table", locationId: loaction.id },
   });
+
+  await prisma.selectedLocations.create({
+    data: { userId: user.id, locationId: loaction.id },
+  });
 }
 
 export async function getCompanyId() {
@@ -68,6 +72,7 @@ export async function getCompanyMenuCategories() {
   const companyId = await getCompanyId();
   const menu_categories = await prisma.menuCategory.findMany({
     where: { companyId },
+    orderBy: { id: "asc" },
   });
   return menu_categories;
 }
@@ -79,7 +84,10 @@ export async function getCompanyMenus() {
     where: { menuCategoryId: { in: menuCategoryIds } },
   });
   const menuIds = menuMenuCategories.map((item) => item.menuId);
-  return await prisma.menu.findMany({ where: { id: { in: menuIds } } });
+  return await prisma.menu.findMany({
+    where: { id: { in: menuIds } },
+    include: { disableLocationMenus: true },
+  });
 }
 
 export async function getCompanyAddonCategories() {
@@ -128,6 +136,7 @@ export async function getSelectedLocations() {
   });
   return loactions;
 }
+
 export async function getCompanyTables() {
   const location = await getCompanyLocations();
   const locationId = location.map((item) => item.id);
@@ -139,4 +148,11 @@ export async function getCompanyTables() {
 
 export async function getLocationTables(locationId: number) {
   return await prisma.tabels.findMany({ where: { locationId } });
+}
+
+export async function getDisabledLoactionMenus() {
+  const selectedLocation = await getSelectedLocations();
+  return await prisma.disableLocationMenus.findMany({
+    where: { locationsId: selectedLocation?.id },
+  });
 }

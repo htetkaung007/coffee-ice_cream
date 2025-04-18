@@ -4,12 +4,23 @@ import { Box } from "@mui/material";
 import Link from "next/link";
 
 import { Menu } from "@prisma/client";
+import { getSelectedLocations } from "../utils/libs/actions";
 
 interface Props {
-  menu: Menu;
+  menu: any;
+  isAvailable: boolean;
 }
 
-function MenuCard({ menu }: Props) {
+async function MenuCard({ menu }: Props) {
+  const disableLocationMenus = menu.disableLocationMenus[0];
+  const selectedLocation = await getSelectedLocations();
+
+  const isAvailable =
+    disableLocationMenus &&
+    disableLocationMenus.locationsId === selectedLocation?.locationId
+      ? false
+      : true;
+
   return (
     <Link
       href={`/backoffice/menus/${menu.id}`}
@@ -40,11 +51,11 @@ function MenuCard({ menu }: Props) {
                 Price: {menu.price}
               </Typography>
               <Chip
-                label={menu.isAvailable ? "Available" : "Not Available"}
+                label={isAvailable ? "Available" : "Not Available"}
                 sx={{
                   mt: 1,
                   color: "white",
-                  backgroundColor: menu.isAvailable ? "green" : "red",
+                  backgroundColor: isAvailable ? "green" : "red",
                 }}
               />
             </Box>

@@ -18,6 +18,7 @@ model User {
   email String  @unique
   name  String?
   company    Company    @relation(fields: [companyId], references: [id])
+  selectedLocations   SelectedLocations[]
   companyId Int
   createdAt DateTime @default(now())
   updateTime DateTime @updatedAt
@@ -51,13 +52,20 @@ model Loactions {
   id    Int @id @default(autoincrement())
   name String
   tables Tabels[]
+  selectedLocations   SelectedLocations[]
   company    Company    @relation(fields: [companyId], references: [id])
   companyId Int
   createdAt DateTime @default(now())
   updateTime DateTime @updatedAt
 }
 
-
+model SelectedLocations {
+   id              Int           @id @default(autoincrement())
+   location         Loactions        @relation(fields: [locationId], references: [id])
+   locationId      Int
+   user          User         @relation(fields: [userId], references: [id])
+   userId          Int
+}
 
 model Menu {
   id        Int     @id @default(autoincrement())
@@ -66,10 +74,10 @@ model Menu {
   assetUrl   String?
   menuMenuCategory MenuMenCategory[]
   menuAddonCategories   MenuAddonCategories[]
+  disableLocationMenus  DisableLocationMenus[]
   createdAt DateTime @default(now())
   updateTime DateTime @updatedAt
-  isAvailable Boolean @default(true)
-  isArchived Boolean @default(false)
+
   
 }
 model MenuCategory {
@@ -78,10 +86,11 @@ model MenuCategory {
   company    Company    @relation(fields: [companyId], references: [id])
   companyId  Int
   menuMenuCategory MenuMenCategory[]
-  isAvailable Boolean @default(true)
+  disableLocationMenuCategories  DisableLocationMenuCategories[]
+  
   createdAt DateTime @default(now())
   updateTime DateTime @updatedAt
-  isArchived Boolean @default(false)
+  
 }
 //join Tabel
 model MenuMenCategory {
@@ -123,4 +132,18 @@ model MenuAddonCategories {
   isArchive Boolean  @default(false)
   createdAt  DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model DisableLocationMenus {
+   id              Int           @id @default(autoincrement())
+   locationsId      Int
+   menu            Menu          @relation(fields: [MenusId], references: [id])
+   MenusId          Int
+}
+
+model DisableLocationMenuCategories {
+   id              Int           @id @default(autoincrement())
+   locationsId      Int
+   menuCagtegory            MenuCategory          @relation(fields: [MenuCategoryIds], references: [id])
+   MenuCategoryIds          Int
 }
