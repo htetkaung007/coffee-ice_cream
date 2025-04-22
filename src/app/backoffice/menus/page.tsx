@@ -2,10 +2,7 @@ import { Box, Button } from "@mui/material";
 import Link from "next/link";
 
 import MenuCard from "@/app/components/MenuCard";
-import {
-  getCompanyMenus,
-  getSelectedLocations,
-} from "@/app/utils/libs/actions";
+import { getCompanyMenus } from "@/app/utils/libs/actions";
 const Menus = async () => {
   const menus = await getCompanyMenus();
 

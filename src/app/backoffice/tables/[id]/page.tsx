@@ -1,15 +1,9 @@
-import {
-  Box,
-  Button,
-  Checkbox,
-  FormControlLabel,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Box, Button, TextField, Typography } from "@mui/material";
 
 import { DeleteTable, getTable, UpDateTable } from "../action";
 
 import { redirect } from "next/navigation";
+import QRImage from "@/app/components/qrImage";
 
 interface props {
   params: {
@@ -33,7 +27,7 @@ export default async function MenuUpdatePage({ params }: props) {
         sx={{ display: "flex", justifyContent: "space-between", mb: 3 }}
       >
         {/* Title */}
-        <Typography variant="h4">Update Addon Page</Typography>
+        <Typography variant="h4">Update Page : {table.name}</Typography>
         <input value={id} type="hidden" name="id"></input>
         <Button
           type="submit"
@@ -44,6 +38,7 @@ export default async function MenuUpdatePage({ params }: props) {
           Delete
         </Button>
       </Box>
+      <QRImage qrImageUrl={table.qrcodeImageUrl as string} />
       {/* Update*/}
       <Box
         component={"form"}

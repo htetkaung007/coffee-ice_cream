@@ -51,7 +51,7 @@ const createMenu = async () => {
           ))}
         </Box>
       </Box>
-
+      <TextField type="file" name="file" sx={{ mt: 2 }} />
       <FormControlLabel
         control={<Checkbox defaultChecked name="isAvailable" />}
         label="Available"

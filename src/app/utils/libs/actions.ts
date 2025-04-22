@@ -2,6 +2,7 @@
 
 import { getServerSession, User } from "next-auth";
 import { prisma } from "../prisma";
+import { createQRCodeUrl } from "@/app/backoffice/tables/action";
 
 export async function getUser(email: string) {
   return await prisma.user.findFirst({ where: { email } });
@@ -48,7 +49,16 @@ export async function createDefaultData(nextUser: User) {
   });
 
   const table = await prisma.tabels.create({
-    data: { name: "Default Table", locationId: loaction.id },
+    data: {
+      name: "Default Table",
+      locationId: loaction.id,
+      qrcodeImageUrl: "",
+    },
+  });
+  const url = await createQRCodeUrl(table);
+  await prisma.tabels.update({
+    data: { ...table, qrcodeImageUrl: url },
+    where: { id: table.id },
   });
 
   await prisma.selectedLocations.create({
@@ -146,8 +156,11 @@ export async function getCompanyTables() {
   });
 }
 
-export async function getLocationTables(locationId: number) {
-  return await prisma.tabels.findMany({ where: { locationId } });
+export async function getSelectedLocationTables() {
+  const selectedLocation = await getSelectedLocations();
+  return await prisma.tabels.findMany({
+    where: { locationId: selectedLocation?.locationId },
+  });
 }
 
 export async function getDisabledLoactionMenus() {

@@ -1,25 +1,16 @@
-"use client";
 import ItemCard from "@/app/components/itemCard";
 
 import { Box, Button } from "@mui/material";
 import Link from "next/link";
 import TableBarIcon from "@mui/icons-material/TableBar";
-import { getLocationTables } from "@/app/utils/libs/actions";
-import { useEffect, useState } from "react";
-import { Tabels } from "@prisma/client";
-const tables = () => {
-  const [tables, setTables] = useState<Tabels[]>([]);
-  useEffect(() => {
-    handleGetLocationTables();
-  }, []);
-  const handleGetLocationTables = async () => {
-    const currentLocationId = localStorage.getItem(
-      "currentLocationId"
-    ) as string;
+import {
+  getCompanyTables,
+  getSelectedLocations,
+  getSelectedLocationTables,
+} from "@/app/utils/libs/actions";
 
-    const locationTables = await getLocationTables(Number(currentLocationId));
-    setTables(locationTables);
-  };
+const tables = async () => {
+  const selectedLocationTables = await getSelectedLocationTables();
   return (
     <Box>
       <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
@@ -30,7 +21,7 @@ const tables = () => {
         </Link>
       </Box>
       <Box sx={{ display: "flex", flexWrap: "wrap" }}>
-        {tables.map((item) => (
+        {selectedLocationTables.map((item) => (
           <ItemCard
             key={item.id}
             icon={<TableBarIcon />}

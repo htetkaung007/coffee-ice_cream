@@ -1,5 +1,3 @@
-"use client";
-
 import {
   Box,
   Button,
@@ -10,11 +8,14 @@ import {
 
 import { CreateTable } from "../action";
 import { useRef } from "react";
-export default function CreateTables() {
+import { get } from "http";
+import { getSelectedLocations } from "@/app/utils/libs/actions";
+export default async function CreateTables() {
+  /* Need to know hook */
   /* how to back this component from the DOM so we use useRef()  hook */
-  const ref = useRef<HTMLFormElement | null>(null);
+  /*  const ref = useRef<HTMLFormElement | null>(null); */
   /* Use this can call external API or can call another server */
-  const handleCreateTable = (event: any) => {
+  /*   const handleCreateTable = (event: any) => {
     event.preventDefault();
     if (!ref.current) return;
     const fd = new FormData(ref.current);
@@ -22,24 +23,23 @@ export default function CreateTables() {
 
     fd.set("locationId", locationId);
     CreateTable(fd);
-  };
-
+  }; */
+  const currentLocationId = (await getSelectedLocations())?.locationId;
   return (
     <Box
-      ref={ref}
       component={"form"}
       sx={{ display: "flex", flexDirection: "column" }}
       action={CreateTable}
     >
       <TextField defaultValue={""} name="name" label="Addon Table"></TextField>
-
+      <input value={currentLocationId} type="hidden" name="locationId"></input>
       <FormControlLabel
         control={<Checkbox defaultChecked name="isAvailable" />}
         label="Available"
       />
       <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
         <Button
-          onClick={handleCreateTable}
+          type="submit"
           variant="contained"
           sx={{ bgcolor: "#664343", width: "fit-content", mt: 2 }}
         >

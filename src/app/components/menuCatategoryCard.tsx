@@ -8,18 +8,17 @@ import { title } from "process";
 interface Props {
   title: string;
   isAvailable: boolean;
-  key: number;
+
   href: string;
 }
 
 // Flavor items array
 
-const MenuCategoryCard = ({ title, href, key, isAvailable }: Props) => {
+const MenuCategoryCard = ({ title, href, isAvailable }: Props) => {
   return (
     <Link href={href} style={{ textDecoration: "none", color: "#000000" }}>
       <Box display="flex" flexWrap="wrap" gap={2}>
         <Box
-          key={key}
           sx={{
             minWidth: "120px",
             width: "auto-fit",
@@ -30,7 +29,7 @@ const MenuCategoryCard = ({ title, href, key, isAvailable }: Props) => {
             justifyContent: "center",
             alignItems: "center",
             m: 2,
-            opacity: isAvailable ? 1 : 0.7,
+            opacity: isAvailable ? 1 : 0.5,
             borderRadius: 2,
             boxShadow: 2,
             transition: "transform 0.3s, box-shadow 0.3s",

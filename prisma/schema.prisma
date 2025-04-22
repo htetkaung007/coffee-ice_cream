@@ -42,6 +42,7 @@ model Company {
 model Tabels {
   id    Int @id @default(autoincrement())
   name String
+  qrcodeImageUrl String? @default("")
   location    Loactions    @relation(fields: [locationId], references: [id])
   locationId Int
   createdAt DateTime @default(now())
