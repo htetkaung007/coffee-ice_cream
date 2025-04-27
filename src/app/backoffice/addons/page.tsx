@@ -24,6 +24,7 @@ const addons = async () => {
       <Box sx={{ display: "flex", flexWrap: "wrap" }}>
         {addons.map((item) => (
           <ItemCard
+            key={item.id}
             icon={<AddIcon />}
             title={item.name}
             href={`/backoffice/addons/${item.id}`}

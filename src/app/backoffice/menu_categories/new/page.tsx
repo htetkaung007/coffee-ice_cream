@@ -1,3 +1,4 @@
+"use client";
 import {
   Box,
   Button,
@@ -6,13 +7,33 @@ import {
   TextField,
 } from "@mui/material";
 import { CreateMenuCategory } from "../action";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 const AddMenuCategory = () => {
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+  const handleCreateMenuCatergory = async (formData: FormData) => {
+    try {
+      setLoading(true);
+      const response = await CreateMenuCategory(formData);
+      if (response?.error) {
+        toast.error(response?.error);
+      } else {
+        toast.success("MenuCategory Created Successfully");
+        router.push("/backoffice/menu_categories");
+      }
+    } catch (e) {
+      setLoading(false);
+    }
+  };
+
   return (
     <Box
       component={"form"}
       sx={{ display: "flex", flexDirection: "column" }}
-      action={CreateMenuCategory}
+      action={handleCreateMenuCatergory}
     >
       <TextField
         defaultValue={""}

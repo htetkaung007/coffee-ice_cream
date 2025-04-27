@@ -21,6 +21,7 @@ const addonCategories = async () => {
       <Box sx={{ display: "flex", flexWrap: "wrap" }}>
         {addonCategories.map((item) => (
           <ItemCard
+            key={item.id}
             icon={<DashboardCustomizeIcon />}
             title={item.name}
             href={`/backoffice/addon_categories/${item.id}`}
