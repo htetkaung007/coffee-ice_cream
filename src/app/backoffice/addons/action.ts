@@ -11,21 +11,19 @@ export const getAddon = async (id: number) => {
 
 export const UpDateAddon = async (formData: FormData) => {
   const name = formData.get("name") as string;
-
   const price = Number(formData.get("price"));
   const isAvailable = formData.get("isAvailable");
-  const updateAddonId = formData.get("updateAddonId");
+  const updateAddonId = Number(formData.get("updateAddonId"));
   const addonCategoryId = Number(formData.get("updateAddonCategoryId"));
+  console.log("Test addon", formData, isAvailable ? true : false);
 
   await prisma.addons.update({
+    where: { id: updateAddonId },
     data: {
       name,
-      isAvailable: isAvailable ? true : false,
       price,
+      isAvailable: isAvailable ? true : false,
       addonCategoryId,
-    },
-    where: {
-      id: Number(updateAddonId),
     },
   });
 
@@ -49,11 +47,24 @@ export const CreateAddons = async (formData: FormData) => {
   redirect("/backoffice/addons");
 };
 
+/* Force Delete Data Base */
 export const DeleteAddon = async (formData: FormData) => {
   const id = Number(formData.get("id"));
 
   await prisma.addons.deleteMany({
     where: { id },
+  });
+
+  redirect("/backoffice/addons");
+};
+
+/* Update Data Base for soft delete */
+export const DeleteUpdateAddon = async (formData: FormData) => {
+  const id = Number(formData.get("id"));
+
+  await prisma.addons.update({
+    where: { id },
+    data: { isArchived: true },
   });
 
   redirect("/backoffice/addons");

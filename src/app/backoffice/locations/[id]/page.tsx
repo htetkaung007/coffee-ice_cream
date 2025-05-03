@@ -7,7 +7,7 @@ import {
   Typography,
 } from "@mui/material";
 
-import { DeleteLocations, getLocation, UpDateLocation } from "../action";
+import { DeleteUpdateLocations, getLocation, UpDateLocation } from "../action";
 
 import { redirect } from "next/navigation";
 
@@ -31,7 +31,7 @@ export default async function MenuUpdatePage({ params }: props) {
     <Box>
       {/* Delete */}
       <Box
-        action={DeleteLocations}
+        action={DeleteUpdateLocations}
         component={"form"}
         sx={{ display: "flex", justifyContent: "space-between", mb: 3 }}
       >

@@ -12,7 +12,7 @@ export const getTable = async (id: number) => {
     where: { id },
   });
 };
-
+/* Update */
 export const UpDateTable = async (formData: FormData) => {
   const name = formData.get("name") as string;
 
@@ -50,14 +50,15 @@ export const CreateTable = async (formData: FormData) => {
   redirect("/backoffice/tables");
 };
 
-export const DeleteTable = async (formData: FormData) => {
+export const DeleteUpdteTable = async (formData: FormData) => {
   const id = Number(formData.get("id"));
 
-  await prisma.addons.deleteMany({
+  await prisma.tabels.update({
     where: { id },
+    data: { isArchived: true },
   });
 
-  redirect("/backoffice/addons");
+  redirect("/backoffice/tables");
 };
 
 export const createQRCodeUrl = async (table: Tabels) => {
@@ -69,6 +70,7 @@ export const createQRCodeUrl = async (table: Tabels) => {
     qrCodeImage,
     {
       access: "public",
+      allowOverwrite: true,
     }
   );
   return url;

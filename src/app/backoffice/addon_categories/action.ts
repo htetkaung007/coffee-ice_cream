@@ -9,7 +9,7 @@ export const getMenuAndAddonCategory = async (id: number) => {
     include: { menuAddonCategory: true },
   });
 };
-
+/* Update */
 export const UpDateAddonCategory = async (formData: FormData) => {
   const name = formData.get("updateName") as string;
   const isRequired = formData.get("isRequired") as string;
@@ -51,7 +51,7 @@ export const CreateAddonCategory = async (formData: FormData) => {
   redirect("/backoffice/addon_categories");
 };
 
-/* Delete */
+/* Force Delete at Data Base*/
 export const DeleteAddonCategory = async (formData: FormData) => {
   const id = Number(formData.get("Id"));
 
@@ -63,6 +63,26 @@ export const DeleteAddonCategory = async (formData: FormData) => {
   });
   await prisma.addonCategories.delete({
     where: { id },
+  });
+
+  redirect("/backoffice/addon_categories");
+};
+
+/* Update Data Base for soft delete */
+export const DeleteUpdateAddonCategory = async (formData: FormData) => {
+  const id = Number(formData.get("Id"));
+
+  await prisma.menuAddonCategories.updateMany({
+    where: { addonCategoryId: id },
+    data: { isArchived: true },
+  });
+  await prisma.addons.updateMany({
+    where: { addonCategoryId: id },
+    data: { isArchived: true },
+  });
+  await prisma.addonCategories.update({
+    where: { id },
+    data: { isArchived: true },
   });
 
   redirect("/backoffice/addon_categories");

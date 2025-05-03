@@ -1,6 +1,6 @@
 import { Box, Button, TextField, Typography } from "@mui/material";
 
-import { DeleteTable, getTable, UpDateTable } from "../action";
+import { DeleteUpdteTable, getTable, UpDateTable } from "../action";
 
 import { redirect } from "next/navigation";
 import QRImage from "@/app/components/qrImage";
@@ -22,7 +22,7 @@ export default async function MenuUpdatePage({ params }: props) {
     <Box>
       {/* Delete */}
       <Box
-        action={DeleteTable}
+        action={DeleteUpdteTable}
         component={"form"}
         sx={{ display: "flex", justifyContent: "space-between", mb: 3 }}
       >

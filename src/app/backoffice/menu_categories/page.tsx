@@ -9,7 +9,7 @@ import MenuCategoryCard from "@/app/components/menuCatategoryCard";
 const MenuCategories = async () => {
   const companyId = await getCompanyId();
   const menuCategories = await prisma.menuCategory.findMany({
-    where: { companyId },
+    where: { companyId, isArchived: false },
     orderBy: { id: "asc" },
     include: { disableLocationMenuCategories: true },
   });

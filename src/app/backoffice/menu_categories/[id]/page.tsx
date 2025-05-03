@@ -8,7 +8,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { DeleteMenuCategory, UpDateMenuCategory } from "../action";
+import { DeleteUpdateMenuCategory, UpDateMenuCategory } from "../action";
 import { getSelectedLocations } from "@/app/utils/libs/actions";
 
 interface props {
@@ -40,8 +40,9 @@ export default async function MenuUpdatePage({ params }: props) {
 
   return (
     <Box>
+      {/* Delete */}
       <Box
-        action={DeleteMenuCategory}
+        action={DeleteUpdateMenuCategory}
         component={"form"}
         sx={{ display: "flex", justifyContent: "space-between", mb: 3 }}
       >
@@ -56,6 +57,7 @@ export default async function MenuUpdatePage({ params }: props) {
           Delete
         </Button>
       </Box>
+      {/* Update*/}
       <Box
         component={"form"}
         sx={{ display: "flex", flexDirection: "column" }}

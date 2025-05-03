@@ -46,6 +46,7 @@ export const UpDateMenuCategory = async (formData: FormData) => {
         where: { MenuCategoryIds: Number(updateMenuCategoryId) },
       })
     )?.id;
+    if (!id) redirect("/backoffice/menu_categories");
     await prisma.disableLocationMenuCategories.delete({ where: { id } });
   }
   redirect("/backoffice/menu_categories");
@@ -85,7 +86,7 @@ export const CreateMenuCategory = async (formData: FormData) => {
   }
   return { success: "Menu Created Successfully" };
 };
-/* Delete */
+/* Force Delete at data base*/
 export const DeleteMenuCategory = async (formData: any) => {
   const deleteMenuCategoryId = Number(formData.get("menuCategoryId"));
   await prisma.menuMenCategory.deleteMany({
@@ -93,6 +94,20 @@ export const DeleteMenuCategory = async (formData: any) => {
   });
   await prisma.menuCategory.delete({
     where: { id: deleteMenuCategoryId },
+  });
+  redirect("/backoffice/menu_categories");
+};
+
+/* Soft Delete at data base*/
+export const DeleteUpdateMenuCategory = async (formData: any) => {
+  const deleteMenuCategoryId = Number(formData.get("menuCategoryId"));
+  await prisma.menuMenCategory.updateMany({
+    where: { menuCategoryId: deleteMenuCategoryId },
+    data: { isArchived: true },
+  });
+  await prisma.menuCategory.update({
+    where: { id: deleteMenuCategoryId },
+    data: { isArchived: true },
   });
   redirect("/backoffice/menu_categories");
 };

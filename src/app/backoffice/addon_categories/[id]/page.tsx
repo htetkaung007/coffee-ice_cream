@@ -8,11 +8,11 @@ import {
 } from "@mui/material";
 
 import {
-  DeleteAddonCategory,
+  DeleteUpdateAddonCategory,
   getMenuAndAddonCategory,
   UpDateAddonCategory,
 } from "../action";
-import { getMenus } from "../../menus/action";
+
 import { getCompanyMenus } from "@/app/utils/libs/actions";
 
 interface props {
@@ -36,7 +36,7 @@ export default async function AddonCategoryUpdatePage({ params }: props) {
       {/* Delete */}
       <Box
         component={"form"}
-        action={DeleteAddonCategory}
+        action={DeleteUpdateAddonCategory}
         sx={{ display: "flex", justifyContent: "space-between", mb: 3 }}
       >
         {/* Title */}

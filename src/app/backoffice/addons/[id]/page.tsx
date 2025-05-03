@@ -7,7 +7,7 @@ import {
   Typography,
 } from "@mui/material";
 
-import { DeleteAddon, getAddon, UpDateAddon } from "../action";
+import { DeleteUpdateAddon, getAddon, UpDateAddon } from "../action";
 import { prisma } from "@/app/utils/prisma";
 import { getCompanyAddonCategories } from "@/app/utils/libs/actions";
 
@@ -27,7 +27,7 @@ export default async function AddonUpdatePage({ params }: props) {
     <Box>
       {/* Delete */}
       <Box
-        action={DeleteAddon}
+        action={DeleteUpdateAddon}
         component={"form"}
         sx={{ display: "flex", justifyContent: "space-between", mb: 3 }}
       >
@@ -79,7 +79,7 @@ export default async function AddonUpdatePage({ params }: props) {
                 key={addonCategory.id}
                 control={
                   <Checkbox
-                    name="updateMenuCategoryId"
+                    name="updateAddonCategoryId"
                     value={addonCategory.id}
                     checked={addonCategory.id === addon.addonCategoryId}
                   />
@@ -90,13 +90,10 @@ export default async function AddonUpdatePage({ params }: props) {
           </Box>
         </Box>
 
-        <input value={id} type="hidden" name="updateMenuId" />
+        <input value={id} type="hidden" name="updateAddonId" />
         <FormControlLabel
           control={
-            <Checkbox
-              defaultChecked={addon.isAvailable ? true : false}
-              name="isAvailable"
-            />
+            <Checkbox defaultChecked={addon.isAvailable} name="isAvailable" />
           }
           label="Available"
         />

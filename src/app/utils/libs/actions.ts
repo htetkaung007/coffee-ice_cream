@@ -3,6 +3,7 @@
 import { getServerSession, User } from "next-auth";
 import { prisma } from "../prisma";
 import { createQRCodeUrl } from "@/app/backoffice/tables/action";
+import { log } from "console";
 
 export async function getUser(email: string) {
   return await prisma.user.findFirst({ where: { email } });
@@ -21,7 +22,12 @@ export async function createDefaultData(nextUser: User) {
   });
 
   const menu = await prisma.menu.create({
-    data: { name: "Default Menu", price: 100 },
+    data: {
+      name: "Default Menu",
+      price: 100,
+      assetUrl:
+        "https://5ez9pz51cl93qmhn.public.blob.vercel-storage.com/Default%20MenuIcon-8J6xP2FAGf6AoosGMi7w7Lg6nUi4zx.png",
+    },
   });
 
   await prisma.menuMenCategory.create({
@@ -46,6 +52,10 @@ export async function createDefaultData(nextUser: User) {
   });
   const loaction = await prisma.loactions.create({
     data: { name: "Default Location", companyId: company.id },
+  });
+
+  await prisma.selectedLocations.create({
+    data: { userId: user.id, locationId: loaction.id },
   });
 
   const table = await prisma.tabels.create({
@@ -81,7 +91,7 @@ export async function getCompanyId() {
 export async function getCompanyMenuCategories() {
   const companyId = await getCompanyId();
   const menu_categories = await prisma.menuCategory.findMany({
-    where: { companyId },
+    where: { companyId, isArchived: false },
     orderBy: { id: "asc" },
   });
   return menu_categories;
@@ -95,7 +105,7 @@ export async function getCompanyMenus() {
   });
   const menuIds = menuMenuCategories.map((item) => item.menuId);
   return await prisma.menu.findMany({
-    where: { id: { in: menuIds } },
+    where: { id: { in: menuIds }, isArchived: false },
     include: { disableLocationMenus: true },
   });
 }
@@ -108,7 +118,7 @@ export async function getCompanyAddonCategories() {
   });
   const addonCategoryId = menuAddonIds.map((item) => item.addonCategoryId);
   const addonCategories = await prisma.addonCategories.findMany({
-    where: { id: { in: addonCategoryId } },
+    where: { id: { in: addonCategoryId }, isArchived: false },
   });
 
   return addonCategories;
@@ -118,14 +128,14 @@ export const getCompanyaddons = async () => {
   const addonCategories = await getCompanyAddonCategories();
   const addonCategoryIds = addonCategories.map((item) => item.id);
   return await prisma.addons.findMany({
-    where: { addonCategoryId: { in: addonCategoryIds } },
+    where: { addonCategoryId: { in: addonCategoryIds }, isArchived: false },
   });
 };
 
 export async function getCompanyLocations() {
   const loactions = await prisma.loactions.findMany({
     orderBy: { id: "asc" },
-    where: { companyId: await getCompanyId() },
+    where: { companyId: await getCompanyId(), isArchived: false },
   });
   return loactions;
 }
@@ -152,7 +162,7 @@ export async function getCompanyTables() {
   const locationId = location.map((item) => item.id);
   return await prisma.tabels.findMany({
     orderBy: { id: "asc" },
-    where: { locationId: { in: locationId } },
+    where: { locationId: { in: locationId }, isArchived: false },
   });
 }
 

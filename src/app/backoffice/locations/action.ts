@@ -62,7 +62,7 @@ export const CreateLocations = async (formData: FormData) => {
 
   redirect("/backoffice/locations");
 };
-
+/* Force Delete Data Base */
 export const DeleteLocations = async (formData: FormData) => {
   const id = Number(formData.get("id"));
   const currentLocationId = (await getSelectedLocations())?.locationId;
@@ -74,6 +74,25 @@ export const DeleteLocations = async (formData: FormData) => {
   });
   await prisma.loactions.delete({
     where: { id },
+  });
+  redirect("/backoffice/locations");
+};
+
+/* Update dataBase for Delete Method */
+export const DeleteUpdateLocations = async (formData: FormData) => {
+  const id = Number(formData.get("id"));
+  const currentLocationId = (await getSelectedLocations())?.locationId;
+  if (id === currentLocationId) {
+    redirect("/backoffice/locations?error=Current Location Cann't be Delete");
+  }
+  /* I don't know yet it is need or not */
+  await prisma.tabels.updateMany({
+    where: { locationId: id },
+    data: { isArchived: true },
+  });
+  await prisma.loactions.update({
+    where: { id },
+    data: { isArchived: true },
   });
   redirect("/backoffice/locations");
 };

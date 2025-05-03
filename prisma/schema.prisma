@@ -47,6 +47,7 @@ model Tabels {
   locationId Int
   createdAt DateTime @default(now())
   updateTime DateTime @updatedAt
+  isArchived Boolean @default(false)
 }
 
 model Loactions {
@@ -58,6 +59,7 @@ model Loactions {
   companyId Int
   createdAt DateTime @default(now())
   updateTime DateTime @updatedAt
+  isArchived Boolean @default(false)
 }
 
 model SelectedLocations {
@@ -66,6 +68,9 @@ model SelectedLocations {
    locationId      Int
    user          User         @relation(fields: [userId], references: [id])
    userId          Int
+   createdAt DateTime @default(now())
+  updateTime DateTime @updatedAt
+  isArchived Boolean @default(false)
 }
 
 model Menu {
@@ -78,6 +83,7 @@ model Menu {
   disableLocationMenus  DisableLocationMenus[]
   createdAt DateTime @default(now())
   updateTime DateTime @updatedAt
+  isArchived Boolean @default(false)
 
   
 }
@@ -88,9 +94,9 @@ model MenuCategory {
   companyId  Int
   menuMenuCategory MenuMenCategory[]
   disableLocationMenuCategories  DisableLocationMenuCategories[]
-  
   createdAt DateTime @default(now())
   updateTime DateTime @updatedAt
+  isArchived Boolean @default(false)
   
 }
 //join Tabel
@@ -100,6 +106,9 @@ model MenuMenCategory {
   menuCategoryId Int
   menu Menu @relation(fields: [menuId],references: [id])
   menuId    Int
+  createdAt DateTime @default(now())
+  updateTime DateTime @updatedAt
+  isArchived Boolean @default(false)
 }
 
 model Addons {
@@ -111,6 +120,7 @@ model Addons {
   isAvailable Boolean @default(true)
   createdAt DateTime @default(now())
   updateTime DateTime @updatedAt
+  isArchived Boolean @default(false)
 }
 
 model AddonCategories {
@@ -119,9 +129,10 @@ model AddonCategories {
   isRequired        Boolean             @default(false)
   addons             Addons[]
   menuAddonCategory MenuAddonCategories[]
-  isArchive Boolean  @default(false)
-  createdAt  DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  
+  createdAt DateTime @default(now())
+  updateTime DateTime @updatedAt
+  isArchived Boolean @default(false)
 }
 
 model MenuAddonCategories {
@@ -131,8 +142,9 @@ model MenuAddonCategories {
   addonCategory   AddonCategories @relation(fields: [addonCategoryId], references: [id])
   addonCategoryId Int
   isArchive Boolean  @default(false)
-  createdAt  DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updateTime DateTime @updatedAt
+  isArchived Boolean @default(false)
 }
 
 model DisableLocationMenus {
@@ -140,6 +152,9 @@ model DisableLocationMenus {
    locationsId      Int
    menu            Menu          @relation(fields: [MenusId], references: [id])
    MenusId          Int
+   createdAt DateTime @default(now())
+  updateTime DateTime @updatedAt
+  isArchived Boolean @default(false)
 }
 
 model DisableLocationMenuCategories {
@@ -147,4 +162,7 @@ model DisableLocationMenuCategories {
    locationsId      Int
    menuCagtegory            MenuCategory          @relation(fields: [MenuCategoryIds], references: [id])
    MenuCategoryIds          Int
+   createdAt DateTime @default(now())
+  updateTime DateTime @updatedAt
+  isArchived Boolean @default(false)
 }
