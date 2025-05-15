@@ -1,5 +1,6 @@
 "use server";
 
+/* Back_Office Fuctions */
 import { getServerSession, User } from "next-auth";
 import { prisma } from "../prisma";
 import { createQRCodeUrl } from "@/app/backoffice/tables/action";
@@ -179,3 +180,70 @@ export async function getDisabledLoactionMenus() {
     where: { locationsId: selectedLocation?.id },
   });
 }
+
+/* Order App Functions */
+
+export const getCompanyByTableId = async (tableIdNumber: number) => {
+  const table = await prisma.tabels.findFirst({
+    where: { id: tableIdNumber },
+  });
+  if (!table) {
+    throw new Error("Table not found");
+  }
+  const location = await prisma.loactions.findFirst({
+    where: { id: table.locationId },
+  });
+  const company = await prisma.company.findFirst({
+    where: { id: location?.companyId },
+  });
+  if (!company) {
+    throw new Error("Company not found");
+  }
+  return company;
+};
+
+export const getOrderAppCompanyMenuCategories = async (
+  tableIdNumber: number
+) => {
+  const company = await getCompanyByTableId(tableIdNumber);
+  const menuCategories = await prisma.menuCategory.findMany({
+    where: { companyId: company.id, isArchived: false },
+    orderBy: { id: "asc" },
+    include: {
+      menuMenuCategory: true,
+    },
+  });
+  const table = await prisma.tabels.findFirst({
+    where: { id: tableIdNumber },
+  });
+  const loaction = await prisma.loactions.findFirst({
+    where: { id: table?.locationId },
+  });
+  const disableLocationMenuCategories =
+    await prisma.disableLocationMenuCategories.findMany({
+      where: { locationsId: loaction?.id },
+    });
+  return menuCategories.filter((menuCategory) => {
+    return (
+      menuCategory.id !== disableLocationMenuCategories[0]?.MenuCategoryIds
+    );
+  });
+};
+
+export const getMenusByMenuCategoryIds = async (menucategoryIds: number[]) => {
+  const menuMenuCategories = await prisma.menuMenCategory.findMany({
+    where: { menuCategoryId: { in: menucategoryIds } },
+  });
+  const menuIds = menuMenuCategories.map((item) => item.menuId);
+  const menus = await prisma.menu.findMany({
+    where: { id: { in: menuIds }, isArchived: false },
+    include: {
+      disableLocationMenus: true,
+    },
+  });
+  const disableLocationMenus = await prisma.disableLocationMenus.findMany({
+    where: { MenusId: { in: menuIds } },
+  });
+  const disableMenuIds = disableLocationMenus.map((item) => item.MenusId);
+  return menus.filter((menu) => !disableMenuIds.includes(menu.id));
+};

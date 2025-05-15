@@ -1,8 +1,9 @@
 import { Box, Button } from "@mui/material";
 import Link from "next/link";
 
-import MenuCard from "@/app/components/MenuCard";
+import MenuCard from "@/app/components/BackOfficeMenuCard";
 import { getCompanyMenus } from "@/app/utils/libs/actions";
+import BackOfficeMenuCard from "@/app/components/BackOfficeMenuCard";
 const Menus = async () => {
   const menus = await getCompanyMenus();
 
@@ -17,7 +18,7 @@ const Menus = async () => {
       </Box>
       <Box sx={{ display: "flex", flexWrap: "wrap" }}>
         {menus.map((item) => (
-          <MenuCard menu={item} isAvailable={true} key={item.id}></MenuCard>
+          <BackOfficeMenuCard menu={item} key={item.id} />
         ))}
       </Box>
     </Box>

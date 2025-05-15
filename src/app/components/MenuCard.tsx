@@ -1,31 +1,28 @@
+"use client";
 import React from "react";
 import { Card, CardContent, Typography, Chip, CardMedia } from "@mui/material";
 import { Box } from "@mui/material";
 import Link from "next/link";
 
-import { Menu } from "@prisma/client";
-import { getSelectedLocations } from "../utils/libs/actions";
-
 interface Props {
-  menu: any;
-  isAvailable: boolean;
+  name: string;
+  price: number;
+  imageUrl?: string;
+  href: string;
+  showIsAvailable?: boolean;
+  isAvailable?: boolean;
 }
 
-async function MenuCard({ menu }: Props) {
-  const disableLocationMenus = menu.disableLocationMenus[0];
-  const selectedLocation = await getSelectedLocations();
-
-  const isAvailable =
-    disableLocationMenus &&
-    disableLocationMenus.locationsId === selectedLocation?.locationId
-      ? false
-      : true;
-
+function MenuCard({
+  name,
+  price,
+  imageUrl,
+  href,
+  isAvailable,
+  showIsAvailable,
+}: Props) {
   return (
-    <Link
-      href={`/backoffice/menus/${menu.id}`}
-      style={{ textDecoration: "none" }}
-    >
+    <Link href={href} style={{ textDecoration: "none" }}>
       <Box p={4}>
         <Card
           sx={{
@@ -39,25 +36,35 @@ async function MenuCard({ menu }: Props) {
           <CardMedia
             component="img"
             height="150"
-            image={menu.assetUrl ? menu.assetUrl : ""}
-            alt={menu.name}
+            image={imageUrl ? imageUrl : ""}
+            alt={name}
           />
           <CardContent>
             <Typography variant="h6" gutterBottom>
-              {menu.name}
+              {name}
             </Typography>
-            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+            <Box sx={{ display: "flex" }}>
               <Typography variant="body1" color="text.secondary">
-                Price: {menu.price}
+                Price: {price}
               </Typography>
-              <Chip
-                label={isAvailable ? "Available" : "Not Available"}
-                sx={{
-                  mt: 1,
-                  color: "white",
-                  backgroundColor: isAvailable ? "green" : "red",
-                }}
-              />
+              {showIsAvailable && (
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    ml: 10,
+                  }}
+                >
+                  <Chip
+                    label={isAvailable ? "Available" : "Not Available"}
+                    sx={{
+                      mt: 1,
+                      color: "white",
+                      backgroundColor: isAvailable ? "green" : "red",
+                    }}
+                  />
+                </Box>
+              )}
             </Box>
           </CardContent>
         </Card>
