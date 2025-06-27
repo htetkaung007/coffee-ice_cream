@@ -81,7 +81,7 @@ export default async function AddonUpdatePage({ params }: props) {
                   <Checkbox
                     name="updateAddonCategoryId"
                     value={addonCategory.id}
-                    checked={addonCategory.id === addon.addonCategoryId}
+                    defaultChecked={addonCategory.id === addon.addonCategoryId}
                   />
                 }
                 label={addonCategory.name}

@@ -45,6 +45,7 @@ model Tabels {
   qrcodeImageUrl String? @default("")
   location    Loactions    @relation(fields: [locationId], references: [id])
   locationId Int
+  orders Orders[]
   createdAt DateTime @default(now())
   updateTime DateTime @updatedAt
   isArchived Boolean @default(false)
@@ -81,6 +82,7 @@ model Menu {
   menuMenuCategory MenuMenCategory[]
   menuAddonCategories   MenuAddonCategories[]
   disableLocationMenus  DisableLocationMenus[]
+  orders Orders[]
   createdAt DateTime @default(now())
   updateTime DateTime @updatedAt
   isArchived Boolean @default(false)
@@ -117,6 +119,7 @@ model Addons {
   price     Int
   addonCategory   AddonCategories @relation(fields: [addonCategoryId], references: [id])
   addonCategoryId Int
+  OrdersAddons OrdersAddons[]
   isAvailable Boolean @default(true)
   createdAt DateTime @default(now())
   updateTime DateTime @updatedAt
@@ -165,4 +168,35 @@ model DisableLocationMenuCategories {
    createdAt DateTime @default(now())
   updateTime DateTime @updatedAt
   isArchived Boolean @default(false)
+}
+
+model Orders {
+  id        Int     @id @default(autoincrement())
+  menuId    Int
+  quantity Int
+  tableId Int
+  status ORDERSTATUS @default(CART)
+  menu    Menu    @relation(fields: [menuId], references: [id])
+  table    Tabels  @relation(fields: [tableId], references: [id])
+  createdAt DateTime @default(now())
+  updateTime DateTime @updatedAt
+  isArchived Boolean @default(false)
+  OrdersAddons OrdersAddons[]
+}
+//order id with addon id join table
+model OrdersAddons {
+  id        Int     @id @default(autoincrement())
+  orderId    Int 
+  order    Orders   @relation(fields: [orderId], references: [id])
+  addonId    Int
+  addon    Addons   @relation(fields: [addonId], references: [id])
+  
+}
+enum ORDERSTATUS {
+  CART
+  PENDING
+  COOKING
+  COMPLETED
+  CANCELLED
+  
 }

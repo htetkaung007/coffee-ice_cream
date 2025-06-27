@@ -7,7 +7,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { CreateMenu, DeleteUpdateMenu, UpDateMenu } from "../action";
+import { DeleteUpdateMenu, UpDateMenu } from "../action";
 
 import { Menu, MenuCategory } from "@prisma/client";
 import toast from "react-hot-toast";
@@ -18,6 +18,7 @@ import { upload } from "@vercel/blob/client";
 import Image from "next/image";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { styled } from "@mui/material/styles";
+
 interface Props {
   menu: Menu;
   menuCategories: MenuCategory[];
@@ -54,6 +55,7 @@ const UpdateMenuPage = ({
         toast.error(response?.error);
       } else {
         toast.success("Menu Created Successfully");
+        router.refresh();
         router.push("/backoffice/menus");
       }
     } catch (e) {

@@ -2,19 +2,30 @@
 
 import { Box, Button } from "@mui/material";
 import { AddonCategoriesAndAddons } from "./AddonCategoriesAndAddons";
-import { AddonCategories, Addons, Menu } from "@prisma/client";
+import {
+  AddonCategories,
+  Addons,
+  Menu,
+  Orders,
+  OrdersAddons,
+} from "@prisma/client";
 import QuantitySelector from "./QuantitySelector";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { AddonType } from "./Addons";
 import { MenuWithMenusAddonCategories } from "../order/menus/[id]/page";
+import { createCartOrder } from "../order/cart/action";
+
+export interface OrdersWithOrderAddons extends Orders {
+  OrdersAddons: OrdersAddons[];
+}
 
 interface Props {
   menu: MenuWithMenusAddonCategories;
   addonCategories: AddonCategories[];
   addons: Addons[];
   tableId: string;
-  /* order?: OrdersWithOrderAddons | null; */
+  order: OrdersWithOrderAddons | null;
 }
 
 export default function MenuOptions({
@@ -22,8 +33,8 @@ export default function MenuOptions({
   addonCategories,
   addons,
   tableId,
-}: /*  order, */
-Props) {
+  order,
+}: Props) {
   /* State */
   const [quantity, setQuantity] = useState(1);
   const [selectedAddons, setSelectedAddons] = useState<Addons[]>([]);
@@ -43,7 +54,18 @@ Props) {
       requiredAddonCategories.length !== selectedRequiredAddons.length;
     setIsDisabled(isDisabled);
   }, [selectedAddons, addonCategories]);
-  /* useEffect(() => {}, [order]); */
+
+  useEffect(() => {
+    if (order) {
+      const orderAddonIds = order.OrdersAddons.map((item) => item.addonId);
+      const orderAddons = addons.filter((item) =>
+        orderAddonIds.includes(item.id)
+      );
+      setSelectedAddons(orderAddons);
+      setQuantity(order.quantity);
+    }
+  }, [order]);
+
   /* Function */
   const handleQuantityIncrease = () => {
     const newValue = quantity + 1;
@@ -53,7 +75,23 @@ Props) {
     const newValue = quantity - 1 === 0 ? 1 : quantity - 1;
     setQuantity(newValue);
   };
-  const handleCreateCartOrder = () => {};
+  const handleCreateCartOrder = async () => {
+    const response = await createCartOrder({
+      menuId: menu.id,
+      addonIds: selectedAddons.map((item) => item.id),
+      quantity,
+      tableId: Number(tableId),
+      orderId: order?.id || undefined,
+    });
+
+    /*  router.push("/order/cart?tableId=" + tableId); */
+    /* if (response?.error) {
+      toast.error(response.error);
+    } else {
+      toast.success("Menu added to cart");
+      
+    } */
+  };
   return (
     <Box
       sx={{
@@ -86,7 +124,7 @@ Props) {
         onClick={handleCreateCartOrder}
         sx={{ width: "fit-content", mt: 2 }}
       >
-        Add to cart
+        {order ? "Update Order" : "Add to Cart"}
       </Button>
     </Box>
   );

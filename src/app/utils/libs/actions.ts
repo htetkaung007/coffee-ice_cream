@@ -130,6 +130,7 @@ export const getCompanyaddons = async () => {
   const addonCategoryIds = addonCategories.map((item) => item.id);
   return await prisma.addons.findMany({
     where: { addonCategoryId: { in: addonCategoryIds }, isArchived: false },
+    orderBy: { id: "asc" },
   });
 };
 

@@ -1,9 +1,5 @@
-import { Typography } from "@mui/material";
+import { redirect } from "next/navigation";
 
-export default async function Order() {
-  return (
-    <>
-      <Typography variant="h2">Order</Typography>
-    </>
-  );
+export default async function BackofficePage() {
+  redirect("/backoffice/order/pending");
 }

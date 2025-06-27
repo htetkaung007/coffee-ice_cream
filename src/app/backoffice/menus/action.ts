@@ -5,6 +5,7 @@ import { prisma } from "@/app/utils/prisma";
 import { redirect } from "next/navigation";
 import { put } from "@vercel/blob";
 import { optional, z } from "zod";
+import { revalidatePath } from "next/cache";
 
 const FormSchema = z.object({
   id: z
@@ -41,7 +42,6 @@ const DeleteMenuValidation = FormSchema.omit({
 const UpdateMenuValidation = FormSchema.omit({ menuCategoryIds: true });
 /* Update */
 export const UpDateMenu = async (formData: FormData) => {
-  console.log("FormData", formData);
   try {
     const { id, name, price, isAvailable } = UpdateMenuValidation.parse({
       id: Number(formData.get("updateMenuId")),
@@ -108,6 +108,7 @@ export const UpDateMenu = async (formData: FormData) => {
     }
     return { error: "Something went wrong . Please contact our support." };
   }
+  revalidatePath("/backoffice/menus");
 };
 /* Create  */
 export const CreateMenu = async (formData: FormData) => {

@@ -40,7 +40,7 @@ export default async function OrderApp({ searchParams }: Props) {
 
   return (
     <Box>
-      <OrderAppHeader company={company} />
+      <OrderAppHeader company={company} tableId={tableIdNumber} />
       <MenuCategoriesTabs
         menuCategories={menuCategories}
         menus={menus}

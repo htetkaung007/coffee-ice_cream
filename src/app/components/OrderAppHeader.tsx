@@ -1,14 +1,21 @@
 import { Box, Typography } from "@mui/material";
-import { Company } from "@prisma/client";
+import { Company, ORDERSTATUS } from "@prisma/client";
 import Image from "next/image";
-
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import { CartButton } from "./CartButton";
+import Link from "next/link";
+import { prisma } from "@/app/utils/prisma";
 interface Props {
+  tableId: number;
   company: Company;
 }
 
-export function OrderAppHeader({ company }: Props) {
+export async function OrderAppHeader({ company, tableId }: Props) {
+  const cartOrders = await prisma.orders.findMany({
+    where: { tableId: tableId, status: ORDERSTATUS.CART },
+  });
   return (
-    <Box position={"relative"}>
+    <Box sx={{ position: "relative" }}>
       <Box
         sx={{
           bgcolor: "green",
@@ -58,6 +65,7 @@ export function OrderAppHeader({ company }: Props) {
           </Box>
         </Box>
       </Box>
+      <CartButton tableId={tableId} cartOrders={cartOrders} />
     </Box>
   );
 }
