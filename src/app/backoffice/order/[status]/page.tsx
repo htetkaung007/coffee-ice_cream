@@ -1,7 +1,4 @@
-import {
-  getSelectedLocations,
-  getSelectedLocationTables,
-} from "@/app/utils/libs/actions";
+import { getSelectedLocationTables } from "@/app/utils/libs/actions";
 import { Box, Button, ButtonGroup } from "@mui/material";
 import { ORDERSTATUS, Prisma } from "@prisma/client";
 import { prisma } from "@/app/utils/prisma";
@@ -12,6 +9,9 @@ interface Props {
   params: {
     status: ORDERSTATUS;
   };
+  searchParams: {
+    tableId: string;
+  };
 }
 
 export type OrdersWithMenuAddonsAndTable = Prisma.OrdersGetPayload<{
@@ -21,9 +21,11 @@ export type OrdersWithMenuAddonsAndTable = Prisma.OrdersGetPayload<{
 export type AddonsWithAddonCategory = Prisma.AddonsGetPayload<{
   include: { addonCategory: true };
 }>;
-export default async function OrderStatusPage({ params }: Props) {
+export default async function OrderStatusPage({ params, searchParams }: Props) {
   const { status } = await params;
-  if (!status) return null;
+  const { tableId } = await searchParams;
+  if (!status && !tableId) return null;
+  const tableIdNumber = Number(tableId);
   const stautsUpperCase = status.toUpperCase();
   //idea
   function isValidOrderStatus(status: string): status is ORDERSTATUS {
@@ -38,10 +40,16 @@ export default async function OrderStatusPage({ params }: Props) {
   //taken form user email
   const tables = await getSelectedLocationTables();
   const tableIds = tables.map((table) => table.id);
+  const selectedTableId = tableIds.includes(tableIdNumber)
+    ? tableIdNumber
+    : undefined;
+  if (!selectedTableId) {
+    return "Invalid table";
+  }
   const orders: OrdersWithMenuAddonsAndTable[] = await prisma.orders.findMany({
     where: {
       status: stautsUpperCase,
-      tableId: { in: tableIds },
+      tableId: selectedTableId,
     },
     include: { OrdersAddons: true, menu: true, table: true },
   });
@@ -52,7 +60,7 @@ export default async function OrderStatusPage({ params }: Props) {
         variant="outlined"
         sx={{ display: "flex", justifyContent: "flex-end" }}
       >
-        <Link href={`/backoffice/order/pending`}>
+        <Link href={`/backoffice/order/pending?tableId=${tableId}`}>
           <Button
             variant={`${
               stautsUpperCase === ORDERSTATUS.PENDING ? "contained" : "outlined"
@@ -61,7 +69,7 @@ export default async function OrderStatusPage({ params }: Props) {
             Pending
           </Button>
         </Link>
-        <Link href={`/backoffice/order/cooking`}>
+        <Link href={`/backoffice/order/cooking?tableId=${tableId}`}>
           <Button
             variant={`${
               stautsUpperCase === ORDERSTATUS.COOKING ? "contained" : "outlined"
@@ -70,7 +78,7 @@ export default async function OrderStatusPage({ params }: Props) {
             Cooking
           </Button>
         </Link>
-        <Link href={`/backoffice/order/completed`}>
+        <Link href={`/backoffice/order/completed?tableId=${tableId}`}>
           <Button
             variant={`${
               stautsUpperCase === ORDERSTATUS.COMPLETED
@@ -81,9 +89,6 @@ export default async function OrderStatusPage({ params }: Props) {
             Completed
           </Button>
         </Link>
-        {/*  <Link href={`/backoffice/order/${ORDERSTATUS.CANCELLED}`}>
-            Cancelled
-          </Link> */}
       </ButtonGroup>
       <Box sx={{ display: "flex", flexWrap: "wrap", gap: 5, mt: 6 }}>
         {orders.map(async (order) => {
@@ -93,7 +98,14 @@ export default async function OrderStatusPage({ params }: Props) {
               where: { id: { in: orderAddonsIds } },
               include: { addonCategory: true },
             });
-          return <OrderCard order={order} addons={addons} isAdmin />;
+          return (
+            <OrderCard
+              order={order}
+              addons={addons}
+              isAdmin
+              tableId={tableId}
+            />
+          );
         })}
       </Box>
     </Box>

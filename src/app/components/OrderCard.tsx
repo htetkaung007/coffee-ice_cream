@@ -11,8 +11,14 @@ interface Props {
   order: OrdersWithMenuAddonsAndTable;
   addons: AddonsWithAddonCategory[];
   isAdmin?: boolean;
+  tableId: string;
 }
-export default async function OrderCard({ order, addons, isAdmin }: Props) {
+export default async function OrderCard({
+  order,
+  addons,
+  isAdmin,
+  tableId,
+}: Props) {
   return (
     <Card
       sx={{

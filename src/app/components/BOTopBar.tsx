@@ -17,7 +17,7 @@ const TopBar = async () => {
     <Box>
       <Box sx={{ flexGrow: 1 }}>
         <AppBar position="static">
-          <Toolbar sx={{ bgcolor: "#3B3030" }}>
+          <Toolbar sx={{ bgcolor: "secondary.main" }}>
             <Box
               sx={{
                 display: "flex",

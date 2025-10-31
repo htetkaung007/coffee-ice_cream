@@ -98,7 +98,7 @@ export async function getTableTotalPrice(
         where: { id: addonId },
       });
       if (addon) {
-        totalPrice += addon.price;
+        totalPrice += addon.price * cartOrder.quantity;
       }
     }
   }

@@ -9,7 +9,7 @@ export default function SingnIn() {
       sx={{
         width: "100vw",
         height: "100vh",
-        bgcolor: "red",
+        bgcolor: "#FFF0D1",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
