@@ -1,5 +1,5 @@
 import { Box, Chip, Typography } from "@mui/material";
-import { AddonCategories, Addons } from "@prisma/client";
+import { AddonCategories, Addons, Menu } from "@prisma/client";
 import { Dispatch, SetStateAction } from "react";
 import { AddonType } from "./Addons";
 import Addon from "./Addons";
@@ -18,8 +18,9 @@ export function AddonCategoriesAndAddons({
   setSelectedAddons,
 }: Props) {
   return (
-    <Box sx={{ width: "100%" }}>
+    <Box sx={{ width: "90%" }}>
       {/* Seprate AddonCategory and their're addons */}
+
       {addonCategories.map((addonCategory) => {
         //talke all addons[] relative with addoncategories[]
         const addonCategoryAddons = addons.filter(
@@ -27,17 +28,26 @@ export function AddonCategoriesAndAddons({
         );
         return (
           //Show AddonCategory Title and Is Requried or not
-          <Box key={addonCategory.id} sx={{ mb: 5 }}>
+          <Box key={addonCategory.id} sx={{ mb: 1 }}>
             <Box sx={{ display: "flex", justifyContent: "space-between" }}>
               <Typography variant="h6" sx={{ userSelect: "none" }}>
                 {addonCategory.name}
               </Typography>
               <Chip
+                sx={{ color: addonCategory.isRequired ? "red" : "Black" }}
                 label={addonCategory.isRequired ? "Required" : "Optional"}
               />
             </Box>
             {/* For Their Relative Addons */}
-            <Box sx={{ pl: 1, mt: 2 }}>
+            <Box
+              sx={{
+                pl: 1,
+                mt: 1,
+
+                borderRadius: 1,
+                py: 0.5,
+              }}
+            >
               <Addon
                 addonCategory={addonCategory}
                 addonCategoryAddons={addonCategoryAddons}

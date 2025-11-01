@@ -7,6 +7,7 @@ import {
 } from "@mui/material";
 import { AddonCategories, Addons, Prisma } from "@prisma/client";
 import { Dispatch, SetStateAction } from "react";
+import { formatPriceClient } from "./MenuOptions";
 
 export type AddonType = Prisma.AddonsGetPayload<{
   include: { addonCategory: true };
@@ -28,7 +29,7 @@ export default function Addon({
   if (!addonCategory) return null;
   console.log("setAddons", selectedAddons);
   return (
-    <Box>
+    <Box sx={{}}>
       {addonCategoryAddons.map((addonCategoryAddon) => {
         return (
           <Box
@@ -105,7 +106,7 @@ export default function Addon({
               label={addonCategoryAddon.name}
             ></FormControlLabel>
             <Typography sx={{ fontStyle: "initial" }}>
-              {addonCategoryAddon.price}
+              {formatPriceClient(addonCategoryAddon.price)}
             </Typography>
           </Box>
         );

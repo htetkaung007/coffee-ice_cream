@@ -14,7 +14,7 @@ export default async function ActiveOrderPage({ searchParams }: Props) {
   const tableId = Number(searchParam.tableId);
 
   const cartOrders = await prisma.orders.findMany({
-    where: { tableId },
+    where: { tableId, status: { not: ORDERSTATUS.PAIDED } },
     include: { OrdersAddons: true, menu: true },
   });
   if (!cartOrders.length)

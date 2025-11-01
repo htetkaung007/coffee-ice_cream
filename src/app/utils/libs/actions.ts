@@ -248,3 +248,7 @@ export const getMenusByMenuCategoryIds = async (menucategoryIds: number[]) => {
   const disableMenuIds = disableLocationMenus.map((item) => item.MenusId);
   return menus.filter((menu) => !disableMenuIds.includes(menu.id));
 };
+
+export const formatPrice = async (price: number) => {
+  return price.toLocaleString("en-US");
+};

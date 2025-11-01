@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, Button } from "@mui/material";
+import { Box, Button, Divider, Typography } from "@mui/material";
 import { AddonCategoriesAndAddons } from "./AddonCategoriesAndAddons";
 import {
   AddonCategories,
@@ -11,10 +11,12 @@ import {
 } from "@prisma/client";
 import QuantitySelector from "./QuantitySelector";
 import { useEffect, useState } from "react";
-import { redirect, useRouter } from "next/navigation";
-import { AddonType } from "./Addons";
+
 import { MenuWithMenusAddonCategories } from "../order/menus/[id]/page";
 import { createCartOrder } from "../order/cart/action";
+
+import Image from "next/image";
+import React from "react";
 
 export interface OrdersWithOrderAddons extends Orders {
   OrdersAddons: OrdersAddons[];
@@ -27,7 +29,9 @@ interface Props {
   tableId: string;
   order: OrdersWithOrderAddons | null;
 }
-
+export const formatPriceClient = (price: number): string => {
+  return price.toLocaleString("en-US");
+};
 export default function MenuOptions({
   menu,
   addonCategories,
@@ -39,7 +43,7 @@ export default function MenuOptions({
   const [quantity, setQuantity] = useState(1);
   const [selectedAddons, setSelectedAddons] = useState<Addons[]>([]);
   const [isDisabled, setIsDisabled] = useState(true);
-  const router = useRouter();
+
   useEffect(() => {
     const requiredAddonCategories = addonCategories.filter(
       (item) => item.isRequired
@@ -95,7 +99,10 @@ export default function MenuOptions({
   return (
     <Box
       sx={{
-        maxWidth: 400,
+        maxWidth: 350,
+
+        maxHeight: "fit-content",
+
         margin: "0 auto",
         display: "flex",
         flexDirection: "column",
@@ -103,26 +110,65 @@ export default function MenuOptions({
         pb: 10,
         px: 2,
         position: "relative",
-        marginTop: { xs: 25, md: -5, lg: -22 },
+        marginTop: { xs: 2, md: -5, lg: -20 },
+        borderRadius: "8px",
+        padding: "24px",
+        boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1)",
       }}
     >
+      {/* Photo */}
+      <Box
+        sx={{
+          position: "relative",
+          marginBottom: "24px",
+        }}
+      >
+        <Image
+          src={`${menu.assetUrl}`}
+          alt="Strawberry drink with fresh strawberries"
+          width={400}
+          height={300}
+          style={{
+            width: "100%",
+            height: "256px",
+            objectFit: "cover",
+            borderRadius: "8px",
+          }}
+        />
+      </Box>
       {/* For AddonCategories and Addons */}
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          width: "90%",
+          mb: 1,
+        }}
+      >
+        <Typography variant="h6" sx={{ mb: 0.2 }}>
+          {menu.name}
+        </Typography>
+        <Typography fontSize={18}>{formatPriceClient(menu.price)}</Typography>
+      </Box>
+      <Divider sx={{ width: "90%", mb: 2 }} />
       <AddonCategoriesAndAddons
         addonCategories={addonCategories}
         selectedAddons={selectedAddons}
         setSelectedAddons={setSelectedAddons}
         addons={addons}
       />
+
       <QuantitySelector
         value={quantity}
         onDecrease={handleQuantityDecrease}
         onIncrease={handleQuantityIncrease}
       />
+
       <Button
         variant="contained"
         disabled={isDisabled}
         onClick={handleCreateCartOrder}
-        sx={{ width: "fit-content", mt: 2 }}
+        sx={{ width: "fit-content", mt: 1 }}
       >
         {order ? "Update Order" : "Add to Cart"}
       </Button>

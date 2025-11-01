@@ -56,13 +56,19 @@ export default async function MenuDetaisPage({ params, searchParams }: Props) {
         company={company}
         tableId={tableIdNumber}
       ></OrderAppHeader>
-      <MenuOptions
-        order={order}
-        menu={menu}
-        addonCategories={addonCategories}
-        addons={addons}
-        tableId={tableId}
-      />
+      <Box
+        sx={{
+          paddingBottom: "30px",
+        }}
+      >
+        <MenuOptions
+          order={order}
+          menu={menu}
+          addonCategories={addonCategories}
+          addons={addons}
+          tableId={tableId}
+        />
+      </Box>
     </Box>
   );
 }

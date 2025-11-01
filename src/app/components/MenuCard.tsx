@@ -3,6 +3,7 @@ import React from "react";
 import { Card, CardContent, Typography, Chip, CardMedia } from "@mui/material";
 import { Box } from "@mui/material";
 import Link from "next/link";
+import { formatPriceClient } from "./MenuOptions";
 
 interface Props {
   name: string;
@@ -45,7 +46,7 @@ function MenuCard({
             </Typography>
             <Box sx={{ display: "flex" }}>
               <Typography variant="body1" color="text.secondary">
-                Price: {price}
+                Price: {formatPriceClient(price)}
               </Typography>
               {showIsAvailable && (
                 <Box

@@ -16,13 +16,13 @@ import ConfirmButton from "@/app/components/ConfirmButton";
 interface Props {
   tableId: number;
 }
+
 export default async function OrderPage() {
   const tables = await getSelectedLocationTables();
   const tableIds = tables.map((table) => table.id);
   const formatPrice = (price: number): string => {
     return price.toLocaleString("en-US");
   };
-
   return (
     <Box>
       <Typography variant="h4">Order Table</Typography>
